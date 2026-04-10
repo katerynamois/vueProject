@@ -13,6 +13,14 @@ export default {
 }
 </script>
 
-<template></template>
+<template>
+  <h1 class="comment-list">CommentList</h1>
+</template>
 
-<style scoped></style>
+<style scoped>
+.comment-list {
+  color: #333;
+  font-size: 24px;
+  font-weight: bold;
+}
+</style>

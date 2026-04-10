@@ -18,8 +18,7 @@ export default {
       const promises = movieIds.map((id) =>
         fetch(`https://api.themoviedb.org/3/movie/${id}`, {
           headers: {
-            Authorization:
-              'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI5YmZkODVmYzFiMmI5ZmNlNTlmZDZkODg1MDllYjVjMSIsIm5iZiI6MTc3MTU3ODQ5Ni4zMywic3ViIjoiNjk5ODI0ODA4MTQyZDVlY2FhYWI5MTI1Iiwic2NvcGVzIjpbImFwaV9yZWFkIl0sInZlcnNpb24iOjF9.uXRZdg70CQZ1ilW9M2bkLTA3U6KNu84jyxJxgSKx870',
+            Authorization: 'Bearer ' + import.meta.env.VITE_TMDB_TOKEN,
           },
         }).then((r) => r.json()),
       )

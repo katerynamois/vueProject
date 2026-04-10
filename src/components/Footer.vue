@@ -13,6 +13,16 @@ export default {
 }
 </script>
 
-<template></template>
+<template>
+  <div class="footer">
+    <p>Copyright © 2026</p>
+  </div>
+</template>
 
-<style scoped></style>
+<style scoped>
+.footer {
+  background-color: #171718;
+  padding: 20px 0;
+  text-align: center;
+}
+</style>
