@@ -24,7 +24,6 @@ export default {
       )
       Promise.all(promises).then((movies) => {
         this.movies = movies
-        console.log(this.movies)
       })
     },
   },
