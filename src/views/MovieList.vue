@@ -1,5 +1,8 @@
 <script>
+// MovieList is the single source of truth for all movie data.
+// It fetches movies from TMDB and extends each with local state (likes, comments, watched).
 import MovieCard from '@/components/MovieCard.vue'
+
 export default {
   name: 'MovieList',
   components: {
@@ -7,33 +10,44 @@ export default {
   },
   data() {
     return {
+      // All movies including TMDB data and local state
       movies: [],
     }
   },
-  props: {},
-  computed: {},
   methods: {
+    // Increments likes for the movie with the given id
     addLike(movieId) {
       const movie = this.movies.find((m) => m.id === movieId)
       if (movie) movie.likes++
     },
+
+    // Appends a new comment to the movie with the given id
     addComment(movieId, comment) {
       const movie = this.movies.find((m) => m.id === movieId)
       if (movie) movie.comments.push(comment)
     },
+
+    // Updates the watched status for the movie with the given id
     setWatched(movieId, value) {
       const movie = this.movies.find((m) => m.id === movieId)
       if (movie) movie.watched = value
     },
+
+    // Fetches movie details from TMDB API for each selected movie id.
+    // Local state (likes, comments, watched) is merged into each movie object.
     fetchMovies() {
-      const movieIds = [238, 289, 539, 389, 11218, 426, 12593, 10590, 11691, 641]
+      const movieIds = [289, 15873, 11970, 770, 10529, 26566, 3122, 4111, 10803]
+
       const promises = movieIds.map((id) =>
         fetch(`https://api.themoviedb.org/3/movie/${id}`, {
           headers: {
+            // API token stored in .env.local as VITE_TMDB_TOKEN
             Authorization: 'Bearer ' + import.meta.env.VITE_TMDB_TOKEN,
           },
         }).then((r) => r.json()),
       )
+
+      // Wait for all requests to finish, then add local state to each movie
       Promise.all(promises).then((movies) => {
         this.movies = movies.map((movie) => ({
           ...movie,
@@ -44,7 +58,8 @@ export default {
       })
     },
   },
-  watch: {},
+
+  // Fetch movies as soon as the component is mounted
   mounted() {
     this.fetchMovies()
   },
@@ -52,9 +67,11 @@ export default {
 </script>
 
 <template>
+  <!-- Responsive grid: 1 col on mobile, 2 on tablet, 3 on desktop, 4 on large screens -->
   <v-container class="movie-list-container">
     <v-row>
       <v-col v-for="movie in movies" :key="movie.id" cols="12" sm="6" lg="4" xl="3">
+        <!-- Pass full movie object down and listen for emitted events to update state -->
         <MovieCard
           :movie="movie"
           @add-like="addLike(movie.id)"

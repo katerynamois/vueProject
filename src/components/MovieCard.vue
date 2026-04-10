@@ -1,45 +1,65 @@
 <script>
+// MovieCard displays a single movie with all interactive elements.
+// It receives movie data via props and emits events up to MovieList for state updates.
 import CommentList from '@/components/CommentList.vue'
 
 export default {
   name: 'MovieCard',
   components: { CommentList },
+
   props: {
+    // Full movie object including TMDB data and local state (likes, comments, watched)
     movie: {
       type: Object,
       required: true,
     },
   },
+
+  // Events emitted to parent (MovieList) to update the single source of truth
   emits: ['add-like', 'add-comment', 'set-watched'],
+
   data() {
     return {
-      newComment: '',
-      showComments: false,
+      newComment: '',     // Bound to the comment input field
+      showComments: false, // Controls visibility of the comments section
     }
   },
+
   computed: {
+    // Returns a CSS class based on the current like count
+    // 0-5: grey, 6-10: blue, 11+: green
     likesColor() {
       if (this.movie.likes <= 5) return 'likes-grey'
       if (this.movie.likes <= 10) return 'likes-blue'
       return 'likes-green'
     },
   },
+
   methods: {
+    // Emits add-like event — parent handles the increment
     addLike() {
       this.$emit('add-like')
     },
+
+    // Validates input, emits the comment to parent, then clears the field
     addComment() {
       if (this.newComment.trim() !== '') {
         this.$emit('add-comment', this.newComment.trim())
         this.newComment = ''
       }
     },
+
+    // Clears the comment input field without posting
     clearInput() {
       this.newComment = ''
     },
+
+    // Toggles the comments section open/closed when the card is clicked
     toggleComments() {
       this.showComments = !this.showComments
     },
+
+    // Emits the new watched value to parent when checkbox changes
     onWatchedChange(value) {
       this.$emit('set-watched', value)
     },
@@ -48,35 +68,48 @@ export default {
 </script>
 
 <template>
+  <!-- Dynamic class 'movie-watched' changes the card style when the film is marked as seen -->
   <div :class="['movie-card', { 'movie-watched': movie.watched }]" @click="toggleComments">
+
+    <!-- Poster image fetched from TMDB image CDN -->
     <img
       :src="'https://image.tmdb.org/t/p/w500' + movie.poster_path"
       :alt="movie.title"
       class="movie-poster"
     />
 
+    <!-- click.stop prevents card click (toggleComments) from firing inside the body -->
     <div class="movie-body" @click.stop>
       <h3 class="movie-title">{{ movie.title }}</h3>
+
+      <!-- Extract year from release_date (format: YYYY-MM-DD) -->
       <p class="movie-year">{{ movie.release_date.slice(0, 4) }}</p>
 
+      <!-- External link to IMDB using imdb_id from TMDB Movie Detail API -->
       <a :href="'https://www.imdb.com/title/' + movie.imdb_id" target="_blank" class="imdb-link">Se på IMDB ↗</a>
 
+      <!-- Likes count with dynamic color class, and like button -->
       <div class="likes-row">
         <span :class="['likes-count', likesColor]">♥ {{ movie.likes }}</span>
         <button class="like-btn" @click="addLike">Like</button>
       </div>
 
+      <!-- Watched checkbox — two-way via :checked + @change -->
       <label class="watched-label">
         <input type="checkbox" :checked="movie.watched" @change="onWatchedChange($event.target.checked)" />
         {{ movie.watched ? 'Set' : 'Ikke set' }}
       </label>
 
+      <!-- Toggle button text changes based on current state -->
       <p class="comments-hint" @click="toggleComments">
         {{ showComments ? 'Skjul kommentarer ▲' : 'Vis kommentarer ▼' }}
       </p>
 
+      <!-- Comments section — only rendered when showComments is true -->
       <div v-if="showComments" class="comments-section">
+        <!-- Nested CommentList component renders the list of comments -->
         <CommentList :comments="movie.comments" />
+
         <input
           v-model="newComment"
           class="comment-input"
@@ -110,6 +143,7 @@ export default {
   box-shadow: 5px 5px 0 #c0b090;
 }
 
+/* Applied when movie.watched is true */
 .movie-watched {
   background: #e8f5ee;
   border-color: #2E8B6E;
@@ -163,6 +197,7 @@ export default {
   font-size: 0.9rem;
   font-weight: bold;
 }
+/* Color classes determined by likesColor computed property */
 .likes-grey { color: #999; }
 .likes-blue { color: #3a6ea8; }
 .likes-green { color: #2E8B6E; }
