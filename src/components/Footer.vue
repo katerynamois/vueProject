@@ -5,38 +5,50 @@ export default {
 </script>
 
 <template>
-  <v-footer app class="retro-footer">
-    <v-container class="d-flex align-center justify-space-between flex-wrap" style="gap: 8px;">
-      <div class="footer-brand">🎬 CinéRetro</div>
+  <footer class="retro-footer">
+    <div class="footer-inner">
       <div class="footer-copy">© 1948–2025 · Alle rettigheder forbeholdes</div>
-      <div class="d-flex" style="gap: 16px;">
+      <div class="footer-links">
         <span class="footer-link">Kontakt</span>
         <span class="footer-link">Presse</span>
         <span class="footer-link">Privatlivspolitik</span>
       </div>
-    </v-container>
-  </v-footer>
+    </div>
+  </footer>
 </template>
 
 <style scoped>
 .retro-footer {
-  background: #1A1008 !important;
-  border-top: 3px solid #C0392B !important;
-  color: #8B7355 !important;
-  font-size: 0.75rem;
+  background: #1a1008;
+  border-top: 3px solid #c0392b;
+  font-family: 'Georgia', serif;
+  font-size: 0.85rem;
   letter-spacing: 1px;
-  min-height: 52px;
 }
-.footer-brand {
-  color: #D4A843;
-  font-size: 0.9rem;
-  letter-spacing: 2px;
+
+.footer-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 14px 32px;
 }
-.footer-copy { color: #8B7355; }
+
+.footer-copy {
+  color: #8b7355;
+}
+
+.footer-links {
+  display: flex;
+  gap: 16px;
+}
 .footer-link {
-  color: #8B7355;
+  color: #8b7355;
   cursor: pointer;
   transition: color 0.2s;
 }
-.footer-link:hover { color: #D4A843; }
+.footer-link:hover {
+  color: #d4a843;
+}
 </style>

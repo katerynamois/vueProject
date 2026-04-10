@@ -1,113 +1,147 @@
 <script>
 export default {
   name: 'MovieCard',
-  components: {},
-  data() {
-    return {
-      // Lokal data der ændrer sig i appen
-      likes: 0,
-      comments: [],
-      watched: false,
-      newComment: '', // tekst i input-feltet
-      showComments: false, // vis/skjul kommentarer
-    }
-  },
   props: {
-    // Modtager ét film-objekt fra MovieList
     movie: {
       type: Object,
       required: true,
     },
   },
+  emits: ['add-like', 'add-comment', 'set-watched'],
+  data() {
+    return {
+      newComment: '',
+      showComments: false,
+    }
+  },
   computed: {
     likesColor() {
-      if (this.likes <= 5) {
-        return 'grey'
-      } else if (this.likes <= 10) {
-        return 'blue'
-      } else {
-        return 'green'
-      }
+      if (this.movie.likes <= 5) return 'likes-grey'
+      if (this.movie.likes <= 10) return 'likes-blue'
+      return 'likes-green'
     },
   },
   methods: {
-    // Tilføjer +1 til likes
     addLike() {
-      this.likes++
+      this.$emit('add-like')
     },
-    // Tilføjer kommentar til listen
     addComment() {
       if (this.newComment.trim() !== '') {
-        this.comments.push(this.newComment)
-        this.newComment = '' // ryd input-felt
+        this.$emit('add-comment', this.newComment.trim())
+        this.newComment = ''
       }
     },
-    // Sletter al tekst i input-feltet
     clearInput() {
       this.newComment = ''
     },
-    // Skifter mellem vis/skjul kommentarer
     toggleComments() {
       this.showComments = !this.showComments
     },
+    onWatchedChange(value) {
+      this.$emit('set-watched', value)
+    },
   },
-  watch: {},
-  emits: [],
 }
 </script>
 
 <template>
-  <v-card>
-    <!-- Poster billede -->
-    <v-img :src="'https://image.tmdb.org/t/p/w500' + movie.poster_path" height="300px"></v-img>
+  <v-card class="movie-card" @click="toggleComments">
+    <v-img :src="'https://image.tmdb.org/t/p/w500' + movie.poster_path" height="300px" cover></v-img>
 
-    <!-- Titel -->
     <v-card-title>{{ movie.title }}</v-card-title>
 
-    <v-card-text>
-      <!-- Årstal -->
-      <p>{{ movie.release_date.slice(0, 4) }}</p>
+    <v-card-text @click.stop>
+      <p class="movie-year">{{ movie.release_date.slice(0, 4) }}</p>
 
-      <!-- IMDB link -->
-      <a :href="'https://www.imdb.com/title/' + movie.imdb_id" target="_blank">Se på IMDB</a>
+      <a :href="'https://www.imdb.com/title/' + movie.imdb_id" target="_blank" class="imdb-link">Se på IMDB</a>
 
-      <!-- Likes -->
-      <p :class="likesColor">Likes: {{ likes }}</p>
-      <v-btn @click="addLike">Like</v-btn>
+      <p :class="['likes-count', likesColor]">Likes: {{ movie.likes }}</p>
+      <v-btn size="small" class="like-btn" @click="addLike">Like</v-btn>
 
-      <!-- Watched checkbox -->
-      <v-checkbox v-model="watched" :label="watched ? 'Set' : 'Ikke set'"></v-checkbox>
+      <v-checkbox
+        :model-value="movie.watched"
+        :label="movie.watched ? 'Set' : 'Ikke set'"
+        @update:model-value="onWatchedChange"
+      ></v-checkbox>
 
-      <!-- Kommentarer -->
-      <v-btn @click="toggleComments">
-        {{ showComments ? 'Skjul kommentarer' : 'Vis kommentarer' }}
-      </v-btn>
+      <p class="comments-hint">{{ showComments ? 'Skjul kommentarer ▲' : 'Vis kommentarer ▼' }}</p>
 
-      <!-- Liste over kommentarer -->
-      <ul v-if="showComments">
-        <li v-for="(comment, index) in comments" :key="index">{{ comment }}</li>
-      </ul>
+      <div v-if="showComments" class="comments-section">
+        <ul v-if="movie.comments.length > 0" class="comments-list">
+          <li v-for="(comment, index) in movie.comments" :key="index">{{ comment }}</li>
+        </ul>
+        <p v-else class="no-comments">Ingen kommentarer endnu.</p>
 
-      <!-- Input felt til ny kommentar -->
-      <v-text-field
-        v-model="newComment"
-        placeholder="Skriv en kommentar..."
-        @keyup.enter="addComment"
-      ></v-text-field>
-      <v-btn @click="addComment">Post</v-btn>
-      <v-btn @click="clearInput">Slet alt</v-btn>
+        <v-text-field
+          v-model="newComment"
+          placeholder="Skriv en kommentar..."
+          density="compact"
+          @keyup.enter="addComment"
+        ></v-text-field>
+        <div class="comment-actions">
+          <v-btn size="small" @click="addComment">Post</v-btn>
+          <v-btn size="small" @click="clearInput">Slet alt</v-btn>
+        </div>
+      </div>
     </v-card-text>
   </v-card>
 </template>
 
 <style scoped>
-.grey {
-  color: grey;
+.movie-card {
+  cursor: pointer;
 }
-.blue {
-  color: blue;
+
+.movie-year {
+  color: #8b7355;
+  font-size: 0.85rem;
+  margin-bottom: 4px;
 }
-.green {
-  color: green;
+
+.imdb-link {
+  display: inline-block;
+  margin-bottom: 8px;
+  color: #c0392b;
+  font-size: 0.85rem;
+}
+
+.likes-count {
+  font-weight: bold;
+  margin: 8px 0 4px;
+}
+.likes-grey { color: grey; }
+.likes-blue { color: blue; }
+.likes-green { color: #2E8B6E; }
+
+.like-btn {
+  margin-bottom: 8px;
+}
+
+.comments-hint {
+  font-size: 0.75rem;
+  color: #8b7355;
+  cursor: pointer;
+  margin-top: 4px;
+  margin-bottom: 0;
+}
+
+.comments-section {
+  margin-top: 8px;
+}
+
+.comments-list {
+  padding-left: 16px;
+  margin-bottom: 8px;
+}
+
+.no-comments {
+  font-size: 0.8rem;
+  color: #aaa;
+  margin-bottom: 8px;
+}
+
+.comment-actions {
+  display: flex;
+  gap: 8px;
 }
 </style>

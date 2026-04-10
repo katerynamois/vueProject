@@ -21,17 +21,12 @@ export default {
 
 <template>
   <v-app-bar flat class="retro-header" height="70">
-    <v-container class="d-flex align-center justify-space-between pa-0">
-
-      <div class="logo-wrap d-flex align-center" style="gap: 10px;">
-        <v-img src="@/assets/Logo.png" max-height="44" max-width="44" />
-        <div class="logo-text">
-          <div class="logo-title">CinéRetro</div>
-          <div class="logo-sub">THE CLASSIC FILM HOUSE</div>
-        </div>
+    <v-container class="d-flex align-center justify-space-between" style="padding: 0 32px">
+      <div class="logo-wrap" @click="$emit('navigate', 'home')">
+        <img src="@/assets/Logo.png" class="logo-img" alt="CinéRetro logo" />
       </div>
 
-      <nav class="d-flex align-center" style="gap: 28px;">
+      <nav class="d-flex align-center" style="gap: 28px">
         <span
           v-for="link in navLinks"
           :key="link.view"
@@ -42,45 +37,41 @@ export default {
           {{ link.name }}
         </span>
       </nav>
-
     </v-container>
   </v-app-bar>
 </template>
 
 <style scoped>
-.retro-header {
-  background: #1A1008 !important;
-  border-bottom: 3px solid #C0392B !important;
-  box-shadow: 0 2px 0 #D4A843 !important;
+.logo-wrap {
+  cursor: pointer;
+}
+.logo-img {
+  height: 50px;
+  width: auto;
+  display: block;
 }
 
-.logo-title {
-  font-family: 'Georgia', serif;
-  font-size: 1.4rem;
-  font-weight: bold;
-  color: #D4A843;
-  letter-spacing: 2px;
-  line-height: 1;
-}
-.logo-sub {
-  font-size: 0.55rem;
-  color: #8B7355;
-  letter-spacing: 3px;
-  margin-top: 2px;
+.retro-header {
+  background: #1a1008 !important;
+  border-bottom: 3px solid #c0392b !important;
+  box-shadow: 0 2px 0 #d4a843 !important;
 }
 
 .nav-link {
-  font-size: 0.7rem;
+  font-family: 'Georgia', serif;
+  font-size: 0.85rem;
   letter-spacing: 3px;
-  color: #8B7355;
+  color: #8b7355;
   cursor: pointer;
   padding-bottom: 2px;
   border-bottom: 2px solid transparent;
-  transition: color 0.2s, border-color 0.2s;
+  transition:
+    color 0.2s,
+    border-color 0.2s;
 }
 .nav-link:hover,
 .nav-link.active {
-  color: #D4A843;
-  border-bottom-color: #C0392B;
+  color: #d4a843;
+  border-bottom-color: #c0392b;
 }
 </style>
