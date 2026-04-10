@@ -20,7 +20,7 @@ export default {
 
   data() {
     return {
-      newComment: '',     // Bound to the comment input field
+      newComment: '',      // Bound to the comment input field
       showComments: false, // Controls visibility of the comments section
     }
   },
@@ -32,6 +32,23 @@ export default {
       if (this.movie.likes <= 5) return 'likes-grey'
       if (this.movie.likes <= 10) return 'likes-blue'
       return 'likes-green'
+    },
+
+    // Returns the first genre name or empty string
+    genre() {
+      return this.movie.genres && this.movie.genres.length > 0
+        ? this.movie.genres[0].name
+        : ''
+    },
+
+    // Rounds vote_average to one decimal
+    rating() {
+      return this.movie.vote_average ? this.movie.vote_average.toFixed(1) : '—'
+    },
+
+    // Extracts year from release_date (format: YYYY-MM-DD)
+    year() {
+      return this.movie.release_date ? this.movie.release_date.slice(0, 4) : ''
     },
   },
 
@@ -81,12 +98,14 @@ export default {
     <!-- click.stop prevents card click (toggleComments) from firing inside the body -->
     <div class="movie-body" @click.stop>
       <h3 class="movie-title">{{ movie.title }}</h3>
+      <p class="movie-genre">{{ genre }}</p>
 
-      <!-- Extract year from release_date (format: YYYY-MM-DD) -->
-      <p class="movie-year">{{ movie.release_date.slice(0, 4) }}</p>
-
-      <!-- External link to IMDB using imdb_id from TMDB Movie Detail API -->
-      <a :href="'https://www.imdb.com/title/' + movie.imdb_id" target="_blank" class="imdb-link">Se på IMDB ↗</a>
+      <!-- Rating + year + IMDB in one row -->
+      <div class="movie-meta">
+        <span class="movie-rating">★ {{ rating }}</span>
+        <span class="movie-year">{{ year }}</span>
+        <a :href="'https://www.imdb.com/title/' + movie.imdb_id" target="_blank" class="imdb-link">IMDB ↗</a>
+      </div>
 
       <!-- Likes count with dynamic color class, and like button -->
       <div class="likes-row">
@@ -167,19 +186,36 @@ export default {
   margin: 0 0 2px;
 }
 
-.movie-year {
-  font-size: 0.8rem;
+.movie-genre {
+  font-size: 0.75rem;
   color: #8b7355;
-  margin: 0 0 6px;
+  margin: 0 0 8px;
+}
+
+.movie-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.movie-rating {
+  font-size: 0.8rem;
+  color: #d4a843;
+  font-weight: bold;
+}
+
+.movie-year {
+  font-size: 0.75rem;
+  color: #8b7355;
 }
 
 .imdb-link {
-  display: inline-block;
   font-size: 0.75rem;
   color: #c0392b;
   text-decoration: none;
   letter-spacing: 1px;
-  margin-bottom: 10px;
+  margin-left: auto;
 }
 .imdb-link:hover {
   text-decoration: underline;
