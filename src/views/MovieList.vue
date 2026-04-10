@@ -1,7 +1,7 @@
 <script>
 import MovieCard from '@/components/MovieCard.vue'
 export default {
-  name: '',
+  name: 'MovieList',
   components: {
     MovieCard,
   },
@@ -26,7 +26,7 @@ export default {
       if (movie) movie.watched = value
     },
     fetchMovies() {
-      const movieIds = [155, 27205, 680, 13, 122]
+      const movieIds = [238, 289, 539, 389, 11218, 426, 12593, 10590, 11691, 641]
       const promises = movieIds.map((id) =>
         fetch(`https://api.themoviedb.org/3/movie/${id}`, {
           headers: {
@@ -52,16 +52,22 @@ export default {
 </script>
 
 <template>
-  <v-row>
-    <v-col v-for="movie in movies" :key="movie.id" cols="12" md="6" lg="4">
-      <MovieCard
-        :movie="movie"
-        @add-like="addLike(movie.id)"
-        @add-comment="addComment(movie.id, $event)"
-        @set-watched="setWatched(movie.id, $event)"
-      />
-    </v-col>
-  </v-row>
+  <v-container class="movie-list-container">
+    <v-row>
+      <v-col v-for="movie in movies" :key="movie.id" cols="12" sm="6" lg="4" xl="3">
+        <MovieCard
+          :movie="movie"
+          @add-like="addLike(movie.id)"
+          @add-comment="addComment(movie.id, $event)"
+          @set-watched="setWatched(movie.id, $event)"
+        />
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
-<style scoped></style>
+<style scoped>
+.movie-list-container {
+  padding: 32px 16px;
+}
+</style>
