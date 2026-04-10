@@ -1,6 +1,9 @@
 <script>
+import CommentList from '@/components/CommentList.vue'
+
 export default {
   name: 'MovieCard',
+  components: { CommentList },
   props: {
     movie: {
       type: Object,
@@ -67,10 +70,7 @@ export default {
       <p class="comments-hint">{{ showComments ? 'Skjul kommentarer ▲' : 'Vis kommentarer ▼' }}</p>
 
       <div v-if="showComments" class="comments-section">
-        <ul v-if="movie.comments.length > 0" class="comments-list">
-          <li v-for="(comment, index) in movie.comments" :key="index">{{ comment }}</li>
-        </ul>
-        <p v-else class="no-comments">Ingen kommentarer endnu.</p>
+        <CommentList :comments="movie.comments" />
 
         <v-text-field
           v-model="newComment"
@@ -140,17 +140,6 @@ export default {
 
 .comments-section {
   margin-top: 8px;
-}
-
-.comments-list {
-  padding-left: 16px;
-  margin-bottom: 8px;
-}
-
-.no-comments {
-  font-size: 0.8rem;
-  color: #aaa;
-  margin-bottom: 8px;
 }
 
 .comment-actions {

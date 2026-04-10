@@ -1,26 +1,39 @@
 <script>
 export default {
-  name: '',
-  components: {},
-  data() {
-    return {}
+  name: 'CommentList',
+  props: {
+    comments: {
+      type: Array,
+      required: true,
+    },
   },
-  props: {},
-  computed: {},
-  methods: {},
-  watch: {},
-  emits: [],
 }
 </script>
 
 <template>
-  <h1 class="comment-list">CommentList</h1>
+  <ul v-if="comments.length > 0" class="comments-list">
+    <li v-for="(comment, index) in comments" :key="index" class="comment-item">
+      {{ comment }}
+    </li>
+  </ul>
+  <p v-else class="no-comments">Ingen kommentarer endnu.</p>
 </template>
 
 <style scoped>
-.comment-list {
-  color: #333;
-  font-size: 24px;
-  font-weight: bold;
+.comments-list {
+  padding-left: 16px;
+  margin-bottom: 8px;
+}
+
+.comment-item {
+  font-size: 0.85rem;
+  color: #5a4a35;
+  margin-bottom: 4px;
+}
+
+.no-comments {
+  font-size: 0.8rem;
+  color: #aaa;
+  margin-bottom: 8px;
 }
 </style>
