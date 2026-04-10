@@ -45,7 +45,7 @@ export default {
 </script>
 
 <template>
-  <v-card class="movie-card" @click="toggleComments">
+  <v-card :class="['movie-card', { 'movie-watched': movie.watched }]" @click="toggleComments">
     <v-img :src="'https://image.tmdb.org/t/p/w500' + movie.poster_path" height="300px" cover></v-img>
 
     <v-card-title>{{ movie.title }}</v-card-title>
@@ -90,6 +90,19 @@ export default {
 <style scoped>
 .movie-card {
   cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.movie-watched {
+  background-color: #e8f5e9 !important;
+  border: 2px solid #2E8B6E !important;
+}
+
+.movie-watched :deep(.v-card-title),
+.movie-watched :deep(.v-card-text),
+.movie-watched :deep(p),
+.movie-watched :deep(li) {
+  color: #1a1a1a !important;
 }
 
 .movie-year {
