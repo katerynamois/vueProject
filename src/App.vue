@@ -5,39 +5,32 @@ import LandingPage from '/src/views/LandingPage.vue'
 import MovieList from '/src/views/MovieList.vue'
 
 export default {
-  name: '',
-  components: {
-    Header,
-    Footer,
-    LandingPage,
-    MovieList,
-  },
+  name: 'App',
+  components: { Header, Footer, LandingPage, MovieList },
   data() {
     return {
       currentPage: 'home',
     }
   },
-  props: {},
-  computed: {},
-  methods: {},
-  watch: {},
-  emits: [],
 }
 </script>
 
 <template>
-  <v-app>
-    <Header @navigate="currentPage = $event" />
+  <v-app class="retro-app">
+    <Header :currentPage="currentPage" @navigate="currentPage = $event" />
 
     <v-main>
-      <v-container>
-        <LandingPage v-if="currentPage === 'home'" />
-        <MovieList v-else-if="currentPage === 'films'" />
-      </v-container>
+      <LandingPage v-if="currentPage === 'home'" @navigate="currentPage = $event" />
+      <MovieList v-else-if="currentPage === 'films'" />
     </v-main>
 
     <Footer />
   </v-app>
 </template>
 
-<style scoped></style>
+<style>
+.retro-app {
+  background-color: #F5F0E8 !important;
+  font-family: 'Georgia', 'Times New Roman', serif;
+}
+</style>
