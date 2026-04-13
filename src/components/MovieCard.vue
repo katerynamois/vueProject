@@ -22,6 +22,7 @@ export default {
     return {
       newComment: '',      // Bound to the comment input field
       showComments: false, // Controls visibility of the comments section
+      imageError: false,   // Tracks if the poster image failed to load
     }
   },
 
@@ -43,18 +44,26 @@ export default {
     year() {
       return this.movie.release_date ? this.movie.release_date.slice(0, 4) : ''
     },
+
+    // Returns the poster URL or a placeholder if image failed to load
+    posterUrl() {
+      if (this.imageError || !this.movie.poster_path) {
+        return null
+      }
+      return 'https://image.tmdb.org/t/p/w500' + this.movie.poster_path
+    },
   },
 
   methods: {
-    // Emits add-like event — parent handles the increment
+    // Emits add-like event with movie object — parent handles the increment
     addLike() {
-      this.$emit('add-like')
+      this.$emit('add-like', this.movie)
     },
 
-    // Validates input, emits the comment to parent, then clears the field
+    // Validates input, emits the comment with movie object to parent, then clears the field
     addComment() {
       if (this.newComment.trim() !== '') {
-        this.$emit('add-comment', this.newComment.trim())
+        this.$emit('add-comment', this.movie, this.newComment.trim())
         this.newComment = ''
       }
     },
@@ -69,9 +78,14 @@ export default {
       this.showComments = !this.showComments
     },
 
-    // Emits the new watched value to parent when checkbox changes
+    // Emits the new watched value with movie object to parent when checkbox changes
     onWatchedChange(value) {
-      this.$emit('set-watched', value)
+      this.$emit('set-watched', this.movie, value)
+    },
+
+    // Handles image loading errors by setting imageError flag
+    onImageError() {
+      this.imageError = true
     },
   },
 }
@@ -83,10 +97,17 @@ export default {
 
     <!-- Poster image fetched from TMDB image CDN -->
     <img
-      :src="'https://image.tmdb.org/t/p/w500' + movie.poster_path"
+      v-if="posterUrl"
+      :src="posterUrl"
       :alt="movie.title"
       class="movie-poster"
+      @error="onImageError"
     />
+    <!-- Fallback placeholder when image fails to load or is unavailable -->
+    <div v-else class="movie-poster-placeholder">
+      <span class="placeholder-icon">🎬</span>
+      <span class="placeholder-title">{{ movie.title }}</span>
+    </div>
 
     <!-- click.stop prevents card click (toggleComments) from firing inside the body -->
     <div class="movie-body" @click.stop>
@@ -102,12 +123,12 @@ export default {
       <!-- Likes count with dynamic color class, and like button -->
       <div class="likes-row">
         <span :class="['likes-count', likesColor]">♥ {{ movie.likes }}</span>
-        <button class="like-btn" @click="addLike">Like</button>
+        <button class="like-btn" @click.stop="addLike">Like</button>
       </div>
 
       <!-- Watched checkbox — two-way via :checked + @change -->
       <label class="watched-label">
-        <input type="checkbox" :checked="movie.watched" @change="onWatchedChange($event.target.checked)" />
+        <input type="checkbox" :checked="movie.watched" @change.stop="onWatchedChange($event.target.checked)" />
         {{ movie.watched ? 'Set' : 'Ikke set' }}
       </label>
 
@@ -129,8 +150,8 @@ export default {
           @click.stop
         />
         <div class="comment-actions">
-          <button class="comment-btn" @click="addComment">Post</button>
-          <button class="comment-btn" @click="clearInput">Slet alt</button>
+          <button class="comment-btn" @click.stop="addComment">Post</button>
+          <button class="comment-btn" @click.stop="clearInput">Slet alt</button>
         </div>
       </div>
     </div>
@@ -164,6 +185,32 @@ export default {
 .movie-poster {
   width: 100%;
   display: block;
+}
+
+.movie-poster-placeholder {
+  width: 100%;
+  aspect-ratio: 2/3;
+  background: linear-gradient(135deg, #d4c5a9 0%, #c0b090 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.placeholder-icon {
+  font-size: 3rem;
+  opacity: 0.8;
+}
+
+.placeholder-title {
+  font-family: 'Georgia', serif;
+  font-size: 0.9rem;
+  color: #5a4a35;
+  text-align: center;
+  line-height: 1.4;
 }
 
 .movie-body {
