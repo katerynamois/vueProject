@@ -69,19 +69,21 @@ export default {
 
 <template>
   <!-- Responsive grid: 1 col on mobile, 2 on tablet, 3 on desktop, 4 on large screens -->
-  <v-container class="movie-list-container">
-    <v-row>
-      <v-col v-for="movie in movies" :key="movie.id" cols="12" sm="6" lg="4" xl="3">
-        <!-- Pass full movie object down and listen for emitted events to update state -->
-        <MovieCard
-          :movie="movie"
-          @add-like="addLike(movie.id)"
-          @add-comment="addComment(movie.id, $event)"
-          @set-watched="setWatched(movie.id, $event)"
-        />
-      </v-col>
-    </v-row>
-  </v-container>
+  <section class="movie-list-container" aria-label="Filmsamling">
+    <v-container>
+      <v-row>
+        <v-col v-for="movie in movies" :key="movie.id" cols="12" sm="6" lg="4" xl="3">
+          <!-- Pass full movie object down and listen for emitted events to update state -->
+          <MovieCard
+            :movie="movie"
+            @add-like="addLike(movie.id)"
+            @add-comment="addComment(movie.id, $event)"
+            @set-watched="setWatched(movie.id, $event)"
+          />
+        </v-col>
+      </v-row>
+    </v-container>
+  </section>
 </template>
 
 <style scoped>

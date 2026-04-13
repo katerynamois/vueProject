@@ -6,7 +6,7 @@ export default {
 </script>
 
 <template>
-  <div class="landing-page">
+  <section class="landing-page">
     <v-container class="hero-section text-center py-12">
       <div class="badge-label mb-4">— NOW PRESENTING —</div>
       <h1 class="hero-title">The Greatest<br />Films Ever Made</h1>
@@ -17,14 +17,12 @@ export default {
 
       <div class="mt-8">
         <v-btn class="ticket-btn" size="x-large" @click="$emit('navigate', 'films')">
-          <span class="ticket-left">🎟</span>
           SE ALLE FILM
-          <span class="ticket-right">→</span>
         </v-btn>
       </div>
     </v-container>
 
-  </div>
+  </section>
 </template>
 
 <style scoped>
@@ -90,10 +88,12 @@ export default {
   transform: translate(2px, 2px) !important;
   box-shadow: 2px 2px 0 #1a1008 !important;
 }
-.ticket-left {
+.ticket-btn::before {
+  content: '🎟';
   margin-right: 10px;
 }
-.ticket-right {
+.ticket-btn::after {
+  content: '→';
   margin-left: 10px;
 }
 

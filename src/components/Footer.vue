@@ -8,11 +8,11 @@ export default {
   <footer class="retro-footer">
     <div class="footer-inner">
       <div class="footer-copy">© 1948–2025 · Alle rettigheder forbeholdes</div>
-      <div class="footer-links">
-        <span class="footer-link">Kontakt</span>
-        <span class="footer-link">Presse</span>
-        <span class="footer-link">Privatlivspolitik</span>
-      </div>
+      <nav class="footer-links" aria-label="Footer navigation">
+        <a href="#" class="footer-link">Kontakt</a>
+        <a href="#" class="footer-link">Presse</a>
+        <a href="#" class="footer-link">Privatlivspolitik</a>
+      </nav>
     </div>
   </footer>
 </template>
@@ -46,6 +46,7 @@ export default {
 .footer-link {
   color: #8b7355;
   cursor: pointer;
+  text-decoration: none;
   transition: color 0.2s;
 }
 .footer-link:hover {

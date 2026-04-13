@@ -79,18 +79,22 @@ export default {
 
 <template>
   <!-- Dynamic class 'movie-watched' changes the card style when the film is marked as seen -->
-  <div :class="['movie-card', { 'movie-watched': movie.watched }]" @click="toggleComments">
+  <article :class="['movie-card', { 'movie-watched': movie.watched }]" @click="toggleComments">
 
     <!-- Poster image fetched from TMDB image CDN -->
-    <img
-      :src="'https://image.tmdb.org/t/p/w500' + movie.poster_path"
-      :alt="movie.title"
-      class="movie-poster"
-    />
+    <figure class="movie-figure">
+      <img
+        :src="'https://image.tmdb.org/t/p/w500' + movie.poster_path"
+        :alt="movie.title"
+        class="movie-poster"
+      />
+      <figcaption>
+        <h3 class="movie-title">{{ movie.title }}</h3>
+      </figcaption>
+    </figure>
 
     <!-- click.stop prevents card click (toggleComments) from firing inside the body -->
     <div class="movie-body" @click.stop>
-      <h3 class="movie-title">{{ movie.title }}</h3>
 
       <!-- Rating + year + IMDB in one row -->
       <div class="movie-meta">
@@ -117,7 +121,7 @@ export default {
       </p>
 
       <!-- Comments section — only rendered when showComments is true -->
-      <div v-if="showComments" class="comments-section">
+      <section v-if="showComments" class="comments-section">
         <!-- Nested CommentList component renders the list of comments -->
         <CommentList :comments="movie.comments" />
 
@@ -132,9 +136,9 @@ export default {
           <button class="comment-btn" @click="addComment">Post</button>
           <button class="comment-btn" @click="clearInput">Slet alt</button>
         </div>
-      </div>
+      </section>
     </div>
-  </div>
+  </article>
 </template>
 
 <style scoped>
@@ -161,13 +165,21 @@ export default {
   box-shadow: 3px 3px 0 #2E8B6E;
 }
 
+.movie-figure {
+  margin: 0;
+}
+
 .movie-poster {
   width: 100%;
   display: block;
 }
 
+figcaption {
+  padding: 12px 16px 0;
+}
+
 .movie-body {
-  padding: 12px 16px 16px;
+  padding: 4px 16px 16px;
 }
 
 .movie-title {

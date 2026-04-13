@@ -27,7 +27,7 @@ export default {
       </div>
 
       <nav class="d-flex align-center" style="gap: 28px">
-        <span
+        <button
           v-for="link in navLinks"
           :key="link.view"
           class="nav-link"
@@ -35,7 +35,7 @@ export default {
           @click="$emit('navigate', link.view)"
         >
           {{ link.name }}
-        </span>
+        </button>
       </nav>
     </v-container>
   </v-app-bar>
@@ -64,7 +64,9 @@ export default {
   color: #8b7355;
   cursor: pointer;
   padding-bottom: 2px;
+  border: none;
   border-bottom: 2px solid transparent;
+  background: none;
   transition:
     color 0.2s,
     border-color 0.2s;
