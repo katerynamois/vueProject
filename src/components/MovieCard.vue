@@ -34,13 +34,6 @@ export default {
       return 'likes-green'
     },
 
-    // Returns the first genre name or empty string
-    genre() {
-      return this.movie.genres && this.movie.genres.length > 0
-        ? this.movie.genres[0].name
-        : ''
-    },
-
     // Rounds vote_average to one decimal
     rating() {
       return this.movie.vote_average ? this.movie.vote_average.toFixed(1) : '—'
@@ -98,7 +91,6 @@ export default {
     <!-- click.stop prevents card click (toggleComments) from firing inside the body -->
     <div class="movie-body" @click.stop>
       <h3 class="movie-title">{{ movie.title }}</h3>
-      <p class="movie-genre">{{ genre }}</p>
 
       <!-- Rating + year + IMDB in one row -->
       <div class="movie-meta">
@@ -186,11 +178,6 @@ export default {
   margin: 0 0 2px;
 }
 
-.movie-genre {
-  font-size: 0.75rem;
-  color: #8b7355;
-  margin: 0 0 8px;
-}
 
 .movie-meta {
   display: flex;
