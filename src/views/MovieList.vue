@@ -15,24 +15,6 @@ export default {
     }
   },
   methods: {
-    // Increments likes for the movie with the given id
-    addLike(movieId) {
-      const movie = this.movies.find((m) => m.id === movieId)
-      if (movie) movie.likes++
-    },
-
-    // Appends a new comment to the movie with the given id
-    addComment(movieId, comment) {
-      const movie = this.movies.find((m) => m.id === movieId)
-      if (movie) movie.comments.push(comment)
-    },
-
-    // Updates the watched status for the movie with the given id
-    setWatched(movieId, value) {
-      const movie = this.movies.find((m) => m.id === movieId)
-      if (movie) movie.watched = value
-    },
-
     // Fetches movie details from TMDB API for each selected movie id.
     // Local state (likes, comments, watched) is merged into each movie object.
     fetchMovies() {
@@ -48,6 +30,7 @@ export default {
       )
 
       // Wait for all requests to finish, then add local state to each movie
+      // Each movie is passed by reference to MovieCard, so state updates are direct
       Promise.all(promises).then((movies) => {
         this.movies = movies.map((movie) =>
           Object.assign({}, movie, {
@@ -73,12 +56,7 @@ export default {
     <v-row>
       <v-col v-for="movie in movies" :key="movie.id" cols="12" sm="6" lg="4" xl="3">
         <!-- Pass full movie object down and listen for emitted events to update state -->
-        <MovieCard
-          :movie="movie"
-          @add-like="addLike(movie.id)"
-          @add-comment="addComment(movie.id, $event)"
-          @set-watched="setWatched(movie.id, $event)"
-        />
+        <MovieCard :movie="movie" />
       </v-col>
     </v-row>
   </v-container>

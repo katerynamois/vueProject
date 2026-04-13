@@ -15,17 +15,24 @@ export default {
     },
   },
 
-  // Events emitted to parent (MovieList) to update the single source of truth
-  emits: ['add-like', 'add-comment', 'set-watched'],
+
 
   data() {
     return {
       newComment: '',      // Bound to the comment input field
       showComments: false, // Controls visibility of the comments section
+      imageError: false,   // Tracks if poster image failed to load
     }
   },
 
   computed: {
+    posterUrl() {
+      if (this.imageError || !this.movie.poster_path) {
+        return new URL('@/assets/cover.jpg', import.meta.url).href
+      }
+      return 'https://image.tmdb.org/t/p/w500' + this.movie.poster_path
+    },
+
     // Returns a CSS class based on the current like count
     // 0-5: grey, 6-10: blue, 11+: green
     likesColor() {
@@ -46,15 +53,17 @@ export default {
   },
 
   methods: {
-    // Emits add-like event — parent handles the increment
+    // Directly increment likes - object prop is passed by reference
     addLike() {
-      this.$emit('add-like')
+      console.log('[MovieCard] addLike clicked for:', this.movie.title)
+      this.movie.likes++
     },
 
-    // Validates input, emits the comment to parent, then clears the field
+    // Directly add comment to this movie
     addComment() {
       if (this.newComment.trim() !== '') {
-        this.$emit('add-comment', this.newComment.trim())
+        console.log('[MovieCard] addComment for:', this.movie.title)
+        this.movie.comments.push(this.newComment.trim())
         this.newComment = ''
       }
     },
@@ -69,9 +78,15 @@ export default {
       this.showComments = !this.showComments
     },
 
-    // Emits the new watched value to parent when checkbox changes
+    // Directly update watched status for this movie
     onWatchedChange(value) {
-      this.$emit('set-watched', value)
+      console.log('[MovieCard] setWatched for:', this.movie.title, 'to:', value)
+      this.movie.watched = value
+    },
+
+    // Handles image load error - falls back to default cover
+    onImageError() {
+      this.imageError = true
     },
   },
 }
@@ -81,11 +96,12 @@ export default {
   <!-- Dynamic class 'movie-watched' changes the card style when the film is marked as seen -->
   <div :class="['movie-card', { 'movie-watched': movie.watched }]" @click="toggleComments">
 
-    <!-- Poster image fetched from TMDB image CDN -->
+    <!-- Poster image fetched from TMDB image CDN with error fallback -->
     <img
-      :src="'https://image.tmdb.org/t/p/w500' + movie.poster_path"
+      :src="posterUrl"
       :alt="movie.title"
       class="movie-poster"
+      @error="onImageError"
     />
 
     <!-- click.stop prevents card click (toggleComments) from firing inside the body -->
