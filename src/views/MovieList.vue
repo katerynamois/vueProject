@@ -15,22 +15,31 @@ export default {
     }
   },
   methods: {
-    // Increments likes for the movie with the given id
-    addLike(movieId) {
-      const movie = this.movies.find((m) => m.id === movieId)
-      if (movie) movie.likes++
+    // Increments likes for the movie
+    // 接收 movie 对象，直接使用其 id
+    addLike(movieObj) {
+      const movie = this.movies.find((m) => m.id === movieObj.id)
+      if (movie) {
+        movie.likes++
+      }
     },
 
-    // Appends a new comment to the movie with the given id
-    addComment(movieId, comment) {
-      const movie = this.movies.find((m) => m.id === movieId)
-      if (movie) movie.comments.push(comment)
+    // Appends a new comment to the movie
+    // 接收 movie 对象和评论内容
+    addComment(movieObj, comment) {
+      const movie = this.movies.find((m) => m.id === movieObj.id)
+      if (movie) {
+        movie.comments.push(comment)
+      }
     },
 
-    // Updates the watched status for the movie with the given id
-    setWatched(movieId, value) {
-      const movie = this.movies.find((m) => m.id === movieId)
-      if (movie) movie.watched = value
+    // Updates the watched status for the movie
+    // 接收 movie 对象和 watched 状态
+    setWatched(movieObj, value) {
+      const movie = this.movies.find((m) => m.id === movieObj.id)
+      if (movie) {
+        movie.watched = value
+      }
     },
 
     // Fetches movie details from TMDB API for each selected movie id.
@@ -75,9 +84,9 @@ export default {
         <!-- Pass full movie object down and listen for emitted events to update state -->
         <MovieCard
           :movie="movie"
-          @add-like="addLike(movie.id)"
-          @add-comment="addComment(movie.id, $event)"
-          @set-watched="setWatched(movie.id, $event)"
+          @add-like="addLike"
+          @add-comment="addComment"
+          @set-watched="setWatched"
         />
       </v-col>
     </v-row>

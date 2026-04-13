@@ -18,10 +18,18 @@ export default {
   // Events emitted to parent (MovieList) to update the single source of truth
   emits: ['add-like', 'add-comment', 'set-watched'],
 
+  mounted() {
+    // 为每个组件实例创建独立的方法引用，避免闭包问题
+    this._boundAddLike = () => this.addLike()
+    this._boundAddComment = (comment) => this.addComment(comment)
+    this._boundSetWatched = (value) => this.onWatchedChange(value)
+  },
+
   data() {
     return {
       newComment: '',      // Bound to the comment input field
       showComments: false, // Controls visibility of the comments section
+      imageError: false,   // Tracks if poster image failed to load
     }
   },
 
@@ -46,15 +54,17 @@ export default {
   },
 
   methods: {
-    // Emits add-like event — parent handles the increment
+    // Emits add-like event — parent receives movie object via $event and extracts id
     addLike() {
-      this.$emit('add-like')
+      // 发送整个 movie 对象，让父组件通过 $event 获取 id
+      this.$emit('add-like', this.movie)
     },
 
-    // Validates input, emits the comment to parent, then clears the field
+    // Validates input, emits the comment to parent with movie object, then clears the field
     addComment() {
       if (this.newComment.trim() !== '') {
-        this.$emit('add-comment', this.newComment.trim())
+        // 发送 movie 对象和评论内容
+        this.$emit('add-comment', this.movie, this.newComment.trim())
         this.newComment = ''
       }
     },
@@ -64,6 +74,11 @@ export default {
       this.newComment = ''
     },
 
+    // Handles poster image load error by showing placeholder
+    onImageError() {
+      this.imageError = true
+    },
+
     // Toggles the comments section open/closed when the card is clicked
     toggleComments() {
       this.showComments = !this.showComments
@@ -71,7 +86,8 @@ export default {
 
     // Emits the new watched value to parent when checkbox changes
     onWatchedChange(value) {
-      this.$emit('set-watched', value)
+      // 发送 movie 对象和 watched 状态
+      this.$emit('set-watched', this.movie, value)
     },
   },
 }
@@ -81,12 +97,22 @@ export default {
   <!-- Dynamic class 'movie-watched' changes the card style when the film is marked as seen -->
   <div :class="['movie-card', { 'movie-watched': movie.watched }]" @click="toggleComments">
 
-    <!-- Poster image fetched from TMDB image CDN -->
+    <!-- Poster image fetched from TMDB image CDN with fallback -->
     <img
+      v-if="!imageError && movie.poster_path"
       :src="'https://image.tmdb.org/t/p/w500' + movie.poster_path"
       :alt="movie.title"
       class="movie-poster"
+      @error="onImageError"
     />
+    <!-- Fallback placeholder when image fails to load or no poster available -->
+    <div v-else class="movie-poster-placeholder">
+      <div class="placeholder-content">
+        <span class="placeholder-icon">🎬</span>
+        <span class="placeholder-text">{{ movie.title }}</span>
+        <span class="placeholder-year">{{ year }}</span>
+      </div>
+    </div>
 
     <!-- click.stop prevents card click (toggleComments) from firing inside the body -->
     <div class="movie-body" @click.stop>
@@ -164,6 +190,45 @@ export default {
 .movie-poster {
   width: 100%;
   display: block;
+}
+
+.movie-poster-placeholder {
+  width: 100%;
+  aspect-ratio: 2/3;
+  background: linear-gradient(135deg, #3a2a18 0%, #1a1008 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+}
+
+.placeholder-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 20px;
+  color: #d4c5a9;
+}
+
+.placeholder-icon {
+  font-size: 3rem;
+  margin-bottom: 12px;
+  opacity: 0.8;
+}
+
+.placeholder-text {
+  font-family: 'Georgia', serif;
+  font-size: 1rem;
+  font-weight: bold;
+  color: #fff8ee;
+  margin-bottom: 8px;
+  line-height: 1.3;
+}
+
+.placeholder-year {
+  font-size: 0.85rem;
+  color: #8b7355;
 }
 
 .movie-body {
