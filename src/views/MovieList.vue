@@ -49,12 +49,13 @@ export default {
 
       // Wait for all requests to finish, then add local state to each movie
       Promise.all(promises).then((movies) => {
-        this.movies = movies.map((movie) => ({
-          ...movie,
-          likes: 0,
-          comments: [],
-          watched: false,
-        }))
+        this.movies = movies.map((movie) =>
+          Object.assign({}, movie, {
+            likes: 0,
+            comments: [],
+            watched: false,
+          }),
+        )
       })
     },
   },
